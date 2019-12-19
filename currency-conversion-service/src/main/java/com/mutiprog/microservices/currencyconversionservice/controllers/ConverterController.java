@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +18,8 @@ import com.mutiprog.microservices.currencyconversionservice.proxies.CurrencyExch
 
 @RestController
 public class ConverterController {
+
+   private Logger logger = LoggerFactory.getLogger(this.getClass());
 
    @Autowired
    CurrencyExchangeServiceProxy exchangeProxy;
@@ -46,6 +50,7 @@ public class ConverterController {
          @PathVariable BigDecimal quantity) {
       CurrencyConversion body = exchangeProxy.retrieveExchangeValues(from, to);
       BigDecimal conversionResult = body.getRate().multiply(quantity);
+      logger.info("%%%{}%%%", conversionResult);
       return CurrencyConversion.builder().rate(body.getRate()).source(body.getSource()).target(body.getTarget())
             .port(body.getPort()).quantity(quantity).convertedQuantity(conversionResult).build();
 
